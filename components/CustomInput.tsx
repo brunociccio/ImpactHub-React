@@ -12,7 +12,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ placeholder, value, onChangeT
         <TextInput
             style={styles.input}
             placeholder={placeholder}
-            placeholderTextColor="#CCC" // Placeholder cinza claro para contraste
+            placeholderTextColor="#CCC" 
             value={value}
             onChangeText={onChangeText}
             {...props}

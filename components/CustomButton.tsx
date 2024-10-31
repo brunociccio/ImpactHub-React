@@ -11,7 +11,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({ title, onPress }) => {
         <Pressable
             style={({ pressed }) => [
                 styles.button,
-                { backgroundColor: pressed ? '#115c01' : '#92e37c' } 
+                { backgroundColor: pressed ? '#115c01' : '#68d14f' } 
             ]}
             onPress={onPress}
         >

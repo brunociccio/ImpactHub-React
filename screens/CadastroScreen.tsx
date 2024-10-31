@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CadastroScreenNavigationProp } from './types';
 import { RouteProp } from '@react-navigation/native';
 import CustomInput from '../components/CustomInput';
@@ -12,68 +11,57 @@ type Props = {
 };
 
 const CadastroScreen: React.FC<Props> = ({ navigation }) => {
-    const [nomeEmpresa, setNomeEmpresa] = useState('');
+    const [nome, setNome] = useState('');
+    const [dataNascimento, setDataNascimento] = useState('');
+    const [cargo, setCargo] = useState('');
+    const [senha, setSenha] = useState('');
     const [cnpj, setCnpj] = useState('');
     const [email, setEmail] = useState('');
+    const [telefone, setTelefone] = useState('');
     const [endereco, setEndereco] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
 
     const handleCadastro = async () => {
-        if (!nomeEmpresa || !cnpj || !email || !endereco || !username || !password) {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos');
-            return;
-        }
+        const cadastroData = {
+            nome,
+            dataNascimento,
+            cargo,
+            senha,
+            cadastroCnpj: { cnpj },
+            contato: { email, telefone },
+            endereco: { endereco }
+        };
 
-        // Salvar dados de login no AsyncStorage
         try {
-            await AsyncStorage.setItem(
-                'userData',
-                JSON.stringify({ username, password })
-            );
-            Alert.alert('Sucesso', 'Cadastro realizado com sucesso');
-            navigation.navigate('Login');
+            const response = await fetch('http://YOUR_BACKEND_URL/cadastro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cadastroData),
+            });
+
+            if (response.ok) {
+                Alert.alert('Sucesso', 'Cadastro realizado com sucesso');
+                navigation.navigate('Login');
+            } else {
+                Alert.alert('Erro', 'Não foi possível realizar o cadastro');
+            }
         } catch (error) {
-            Alert.alert('Erro', 'Não foi possível salvar os dados');
+            Alert.alert('Erro', 'Erro de conexão com o servidor');
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Cadastro de Empresa</Text>
-            <CustomInput
-                placeholder="Nome da Empresa"
-                value={nomeEmpresa}
-                onChangeText={setNomeEmpresa}
-            />
-            <CustomInput
-                placeholder="CNPJ"
-                value={cnpj}
-                onChangeText={setCnpj}
-                keyboardType="numeric"
-            />
-            <CustomInput
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-            />
-            <CustomInput
-                placeholder="Endereço"
-                value={endereco}
-                onChangeText={setEndereco}
-            />
-            <CustomInput
-                placeholder="Usuário"
-                value={username}
-                onChangeText={setUsername}
-            />
-            <CustomInput
-                placeholder="Senha"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
+            <CustomInput placeholder="Nome" value={nome} onChangeText={setNome} />
+            <CustomInput placeholder="Data de Nascimento" value={dataNascimento} onChangeText={setDataNascimento} />
+            <CustomInput placeholder="Cargo" value={cargo} onChangeText={setCargo} />
+            <CustomInput placeholder="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
+            <CustomInput placeholder="CNPJ" value={cnpj} onChangeText={setCnpj} />
+            <CustomInput placeholder="Email" value={email} onChangeText={setEmail} />
+            <CustomInput placeholder="Telefone" value={telefone} onChangeText={setTelefone} />
+            <CustomInput placeholder="Endereço" value={endereco} onChangeText={setEndereco} />
             <CustomButton title="Cadastrar" onPress={handleCadastro} />
         </View>
     );
@@ -85,4 +73,3 @@ const styles = StyleSheet.create({
 });
 
 export default CadastroScreen;
-
